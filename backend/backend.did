@@ -1,0 +1,31 @@
+type Result_1 = 
+ variant {
+   err: text;
+   ok: nat;
+ };
+type Result = 
+ variant {
+   err: text;
+   ok;
+ };
+type Post = 
+ record {
+   category: opt text;
+   comments: vec Comment;
+   content: text;
+   createdAt: int;
+   id: nat;
+   image: opt text;
+   likes: nat;
+ };
+type Comment = 
+ record {
+   content: text;
+   createdAt: int;
+ };
+service : {
+  addComment: (nat, text) -> (Result);
+  createPost: (text, opt text, opt text) -> (Result_1);
+  getPosts: () -> (vec Post) query;
+  likePost: (nat) -> (Result);
+}
