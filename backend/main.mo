@@ -14,15 +14,18 @@ actor {
     id: Nat;
     content: Text;
     image: ?Text;
-    category: ?Text;
+    category: Text;
     likes: Nat;
     comments: [Comment];
     createdAt: Int;
+    username: Text;
+    avatar: Text;
   };
 
   type Comment = {
     content: Text;
     createdAt: Int;
+    username: Text;
   };
 
   // Stable variables
@@ -35,11 +38,14 @@ actor {
   };
 
   // API methods
-  public query func getPosts() : async [Post] {
-    posts
+  public query func getPosts(category: ?Text) : async [Post] {
+    switch (category) {
+      case (null) { posts };
+      case (?cat) { Array.filter(posts, func (p: Post) : Bool { p.category == cat }) };
+    }
   };
 
-  public func createPost(content: Text, image: ?Text, category: ?Text) : async Result.Result<Nat, Text> {
+  public func createPost(content: Text, image: ?Text, category: Text, username: Text, avatar: Text) : async Result.Result<Nat, Text> {
     let post : Post = {
       id = nextPostId;
       content;
@@ -48,6 +54,8 @@ actor {
       likes = 0;
       comments = [];
       createdAt = Time.now();
+      username;
+      avatar;
     };
     posts := Array.append(posts, [post]);
     nextPostId += 1;
@@ -65,6 +73,8 @@ actor {
           likes = p.likes + 1;
           comments = p.comments;
           createdAt = p.createdAt;
+          username = p.username;
+          avatar = p.avatar;
         }
       } else {
         p
@@ -80,10 +90,11 @@ actor {
     }
   };
 
-  public func addComment(postId: Nat, content: Text) : async Result.Result<(), Text> {
+  public func addComment(postId: Nat, content: Text, username: Text) : async Result.Result<(), Text> {
     let comment : Comment = {
       content;
       createdAt = Time.now();
+      username;
     };
     
     let updatedPosts = Array.map(posts, func (p: Post) : Post {
@@ -96,6 +107,8 @@ actor {
           likes = p.likes;
           comments = Array.append(p.comments, [comment]);
           createdAt = p.createdAt;
+          username = p.username;
+          avatar = p.avatar;
         }
       } else {
         p

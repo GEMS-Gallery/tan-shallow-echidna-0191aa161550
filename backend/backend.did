@@ -10,22 +10,25 @@ type Result =
  };
 type Post = 
  record {
-   category: opt text;
+   avatar: text;
+   category: text;
    comments: vec Comment;
    content: text;
    createdAt: int;
    id: nat;
    image: opt text;
    likes: nat;
+   username: text;
  };
 type Comment = 
  record {
    content: text;
    createdAt: int;
+   username: text;
  };
 service : {
-  addComment: (nat, text) -> (Result);
-  createPost: (text, opt text, opt text) -> (Result_1);
-  getPosts: () -> (vec Post) query;
+  addComment: (nat, text, text) -> (Result);
+  createPost: (text, opt text, text, text, text) -> (Result_1);
+  getPosts: (opt text) -> (vec Post) query;
   likePost: (nat) -> (Result);
 }
